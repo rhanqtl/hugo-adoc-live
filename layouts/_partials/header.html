@@ -1,0 +1,17 @@
+<header class="site-header">
+  <div class="header-inner">
+    <a class="site-brand" href="{{ site.Home.RelPermalink }}" aria-label="{{ site.Title }} 首页">
+      <span class="brand-mark" aria-hidden="true">//</span>
+      <span>{{ site.Title }}</span>
+    </a>
+    <nav class="header-nav" aria-label="主导航">
+      {{ range site.Menus.main }}<a href="{{ .URL | relLangURL }}"{{ if $.IsMenuCurrent "main" . }} aria-current="page"{{ end }}>{{ .Name }}</a>{{ end }}
+    </nav>
+    <div class="reader-tools" aria-label="阅读设置">
+      <button class="icon-button font-button" type="button" data-font-action="down" title="缩小字号" aria-label="缩小字号">A−</button>
+      <button class="icon-button font-button" type="button" data-font-action="reset" title="恢复自适应字号" aria-label="恢复自适应字号">A</button>
+      <button class="icon-button font-button" type="button" data-font-action="up" title="放大字号" aria-label="放大字号">A+</button>
+      <button class="icon-button theme-toggle" type="button" data-theme-toggle title="切换明暗主题" aria-label="切换明暗主题"><span aria-hidden="true">◐</span></button>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,16 @@
+{{ $mathJaxURL := site.Params.mathJaxURL | default "https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" }}
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)']],
+      displayMath: [['\\[', '\\]']],
+      processEscapes: true,
+      processEnvironments: true,
+      processRefs: true,
+      tags: 'ams'
+    },
+    chtml: {matchFontHeight: false},
+    options: {skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']}
+  };
+</script>
+<script defer src="{{ $mathJaxURL }}"></script>

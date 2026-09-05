@@ -1,0 +1,30 @@
+{{- $content := . -}}
+{{- $sourceBlockRE := `(?s)(<div class="listingblock">\s*(?:<div class="title">.*?</div>\s*)?<div class="content">\s*)<pre[^>]*><code class="language-([^"]+)" data-lang="[^"]+">([\s\S]*?)</code></pre>(\s*</div>\s*</div>)` -}}
+{{- $calloutRE := `<i class="conum" data-value="([0-9]+)"></i><b>\([0-9]+\)</b>` -}}
+{{- range findRESubmatch $sourceBlockRE $content -}}
+  {{- $match := index . 0 -}}
+  {{- $prefix := index . 1 -}}
+  {{- $lang := index . 2 | lower -}}
+  {{- $highlightLang := $lang -}}
+  {{- if not (transform.CanHighlight $highlightLang) }}{{ $highlightLang = "text" }}{{ end -}}
+  {{- $code := index . 3 -}}
+  {{- $suffix := index . 4 -}}
+  {{- if not (strings.Contains $code "<span") -}}
+    {{- $callouts := findRESubmatch $calloutRE $code -}}
+    {{- range $callouts -}}
+      {{- $number := index . 1 -}}
+      {{- $code = replace $code (index . 0) (printf "ADOC_CALLOUT_%s" $number) -}}
+    {{- end -}}
+    {{- $highlighted := transform.Highlight ($code | htmlUnescape) $highlightLang (dict "noClasses" false) -}}
+    {{- $highlighted = replaceRE `<code class="language-[^"]+" data-lang="[^"]+">` (printf `<code class="language-%s" data-lang="%s">` $lang $lang) $highlighted -}}
+    {{- range $callouts -}}
+      {{- $number := index . 1 -}}
+      {{- $placeholder := printf "ADOC_CALLOUT_%s" $number -}}
+      {{- $marker := printf `<i class="conum" data-value="%s"></i><b>(%s)</b>` $number $number -}}
+      {{- $highlighted = replaceRE (printf `<span class="[^"]+">%s</span>` $placeholder) $marker $highlighted -}}
+      {{- $highlighted = replace $highlighted $placeholder $marker -}}
+    {{- end -}}
+    {{- $content = replace $content $match (printf "%s%s%s" $prefix $highlighted $suffix) -}}
+  {{- end -}}
+{{- end -}}
+{{- return ($content | safeHTML) -}}

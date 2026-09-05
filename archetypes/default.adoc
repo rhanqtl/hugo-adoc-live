@@ -1,0 +1,18 @@
++++
+title = '{{ replace .File.ContentBaseName "-" " " | title }}'
+date = {{ .Date }}
+draft = true
+description = ""
+showReadingTime = false
+tags = []
++++
+
+= {{ replace .File.ContentBaseName "-" " " | title }}
+
+[.lead]
+在这里写摘要。
+
+== 第一节
+
+正文。
+

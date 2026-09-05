@@ -1,0 +1,17 @@
+<header class="article-header list-header">
+  <p class="eyebrow">COLLECTION</p>
+  <h1>{{ .Title }}</h1>
+  {{ with .Description }}<p class="article-description">{{ . }}</p>{{ end }}
+</header>
+{{ with .Content }}<div class="article-body list-intro">{{ . }}</div>{{ end }}
+<section class="page-list compact-list">
+  {{ range .Pages.ByWeight }}
+    <article class="page-card">
+      <div class="card-meta">{{ if .IsSection }}章节{{ else }}{{ with .Date }}{{ .Format (site.Params.dateFormat | default "2006-01-02") }}{{ end }}{{ end }}</div>
+      <h2><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></h2>
+      {{ with .Description }}<p>{{ . }}</p>{{ else }}{{ with .Summary }}<p>{{ . | plainify | truncate 150 }}</p>{{ end }}{{ end }}
+    </article>
+  {{ else }}
+    <p class="empty-state">这里还没有内容。</p>
+  {{ end }}
+</section>

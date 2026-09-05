@@ -1,0 +1,13 @@
+{{ $src := .Get "src" | default (.Get 0) }}
+{{ if not $src }}{{ errorf "compiler-explorer shortcode requires src: %s" .Position }}{{ end }}
+{{ $title := .Get "title" | default "Compiler Explorer" }}
+{{ $height := .Get "height" | default "620" }}
+<figure class="interactive-embed compiler-explorer">
+  <div class="embed-toolbar">
+    <figcaption>{{ $title }}</figcaption>
+    <a href="{{ $src | safeURL }}" target="_blank" rel="noopener noreferrer">新窗口打开 ↗</a>
+  </div>
+  <div class="embed-frame" style="--embed-height: {{ $height }}px">
+    <iframe src="{{ $src | safeURL }}" title="{{ $title }}" loading="lazy" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads" allow="clipboard-read; clipboard-write" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+  </div>
+</figure>

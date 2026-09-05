@@ -1,0 +1,30 @@
+{{ define "main" }}
+  <article class="page-single">
+    <header class="article-header">
+      {{ with .CurrentSection }}{{ if ne . $.Site.Home }}<a class="section-kicker" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>{{ end }}{{ end }}
+      <h1>{{ .Title }}</h1>
+      {{ with .Description }}<p class="article-description">{{ . }}</p>{{ end }}
+      <div class="article-meta">
+        {{ with .Date }}<time datetime="{{ .Format "2006-1-2" }}">创建于 {{ .Format (site.Params.dateFormat | default "1970-01-01") }}</time>{{ end }}
+        {{ with .Lastmod }}<span>更新于 {{ .Format (site.Params.dateFormat | default "1970-01-01") }}</span>{{ end }}
+        {{ if .Params.showReadingTime }}{{ with .ReadingTime }}<span>{{ . }} 分钟阅读</span>{{ end }}{{ end }}
+      </div>
+      {{ with .GetTerms "tags" }}<div class="tag-list">{{ range . }}<a href="{{ .RelPermalink }}">{{ .LinkTitle | lower }}</a>{{ end }}</div>{{ end }}
+    </header>
+
+    <details class="mobile-toc">
+      <summary>目录</summary>
+      {{ replace .TableOfContents "id=\"TableOfContents\"" "id=\"TableOfContents-mobile\"" | safeHTML }}
+    </details>
+
+    <div class="article-body" data-article-body>
+      {{ partial "chroma-content.html" .Content }}
+    </div>
+
+    {{ with .Params.source }}<p class="edit-page"><a href="{{ . }}" rel="noopener noreferrer">编辑本页 ↗</a></p>{{ end }}
+    <nav class="page-pagination" aria-label="相邻文章">
+      {{ with .NextInSection }}<a class="page-prev" href="{{ .RelPermalink }}"><span>← 上一篇</span><strong>{{ .LinkTitle }}</strong></a>{{ end }}
+      {{ with .PrevInSection }}<a class="page-next" href="{{ .RelPermalink }}"><span>下一篇 →</span><strong>{{ .LinkTitle }}</strong></a>{{ end }}
+    </nav>
+  </article>
+{{ end }}

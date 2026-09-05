@@ -1,0 +1,26 @@
+{{ define "main" }}
+  <section class="home-hero">
+    <p class="eyebrow">{{ site.Params.eyebrow | default "A QUIET PLACE FOR TECHNICAL NOTES" }}</p>
+    <h1>{{ site.Params.Title }}</h1>
+    {{ with site.Params.description }}<p class="hero-description">{{ . }}</p>{{ end }}
+  </section>
+
+  {{ with .Content }}<div class="article-body home-intro">{{ . }}</div>{{ end }}
+
+  <section class="page-list" aria-labelledby="latest-title">
+    <div class="section-heading">
+      <h2 id="latest-title">{{ len site.RegularPages }} 篇</h2>
+    </div>
+    {{ range site.RegularPages.ByWeight }}
+      {{ if not .Params.navHidden }}
+        <article class="page-card">
+          <div class="card-meta">{{ with .CurrentSection }}{{ .LinkTitle }}{{ end }}{{ with .Date }} · {{ .Format (site.Params.dateFormat | default "2006-01-02") }}{{ end }}</div>
+          <h3><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></h3>
+          {{ with .Description }}<p>{{ . }}</p>{{ else }}{{ with .Summary }}<p>{{ . | plainify | truncate 150 }}</p>{{ end }}{{ end }}
+          <a class="read-more" href="{{ .RelPermalink }}" aria-label="阅读 {{ .LinkTitle }}">阅读 →</a>
+        </article>
+      {{ end }}
+    {{ end }}
+  </section>
+{{ end }}
+

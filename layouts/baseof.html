@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="{{ site.Language.Locale | default "zh-CN" }}" dir="{{ site.Language.Direction | default "ltr" }}">
+  {{ partial "head.html" . }}
+  <body id="top" class="{{ if .IsHome }}is-home{{ else if .IsSection }}is-section{{ else }}is-page{{ end }}">
+    <a class="skip-link" href="#main-content">跳到正文</a>
+    <div class="reading-progress" aria-hidden="true"><span></span></div>
+    {{ partial "header.html" . }}
+
+    <div class="page-shell{{ if .IsPage }} has-page-rail{{ end }}">
+      <main id="main-content" class="main-content" tabindex="-1">
+        {{ block "main" . }}{{ end }}
+      </main>
+      {{ if .IsPage }}{{ partial "page-rail.html" . }}{{ end }}
+    </div>
+
+    {{ partial "footer.html" . }}
+  </body>
+</html>

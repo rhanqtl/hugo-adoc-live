@@ -1,0 +1,7 @@
+{{ $path := .Get "page" | default (.Get 0) }}
+{{ if not $path }}{{ errorf "xref shortcode requires page: %s" .Position }}{{ end }}
+{{ $target := .Page.GetPage $path }}
+{{ if not $target }}{{ errorf "xref target %q not found: %s" $path .Position }}{{ end }}
+{{ $fragment := .Get "id" }}
+{{ $label := .Get "text" | default $target.LinkTitle }}
+<a class="xref" href="{{ $target.RelPermalink }}{{ with $fragment }}#{{ . }}{{ end }}">{{ $label }}</a>

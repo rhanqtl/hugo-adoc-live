@@ -1,0 +1,9 @@
+name = "AsciiDoc Live"
+license = "MIT"
+licenselink = "https://opensource.org/license/mit"
+description = "A quiet, book-like Hugo theme with first-class Asciidoctor support."
+tags = ["blog", "documentation", "asciidoc", "responsive", "minimal", "dark"]
+features = ["asciidoctor", "latex math", "sidenotes", "bibliography backlinks", "responsive embeds", "dark mode"]
+
+[author]
+  name = "AsciiDoc Live contributors"

@@ -1,0 +1,59 @@
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#f2f6f3">
+  {{ $title := cond .IsHome site.Title (printf "%s · %s" .Title site.Title) }}
+  {{ $description := .Description | default site.Params.description | default .Summary | plainify }}
+  <title>{{ $title }}</title>
+  {{ with $description }}<meta name="description" content="{{ . }}">{{ end }}
+  <link rel="canonical" href="{{ .Permalink }}">
+  {{ with .OutputFormats.Get "rss" }}<link rel="alternate" type="application/rss+xml" title="{{ site.Title }}" href="{{ .RelPermalink }}">{{ end }}
+
+  {{ $fontLinks := slice }}
+  {{ with site.Params.fontCSS }}{{ $fontLinks = $fontLinks | append . }}{{ end }}
+  {{ with site.Params.mapleFontCSS }}{{ $fontLinks = $fontLinks | append . }}{{ end }}
+  {{ $usesGoogleFonts := false }}
+  {{ range $fontLinks }}
+    {{ if strings.Contains . "fonts.googleapis.com" }}{{ $usesGoogleFonts = true }}{{ end }}
+  {{ end }}
+  {{ if $usesGoogleFonts }}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  {{ end }}
+  {{ range $fontLinks }}
+    <link rel="stylesheet" href="{{ . | safeURL }}">
+  {{ end }}
+
+  <script>
+    (() => {
+      const saved = localStorage.getItem('adoc-theme');
+      const theme = saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.dataset.theme = theme;
+      document.querySelector('meta[name="theme-color"]').content = theme === 'dark' ? '#0f1512' : '#f2f6f3';
+      document.documentElement.classList.add('js');
+      const step = Number(localStorage.getItem('adoc-font-step'));
+      if (step >= -0.15 && step <= 0.3) document.documentElement.style.setProperty('--reader-step', `${step}rem`);
+    })();
+  </script>
+  {{ with resources.Get "css/main.css" }}
+    {{ $style := . | minify | fingerprint }}
+    <link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
+  {{ end }}
+  {{ $math := false }}
+  {{ with .RawContent }}
+    {{ if or (strings.Contains . "latexmath:") (strings.Contains . "[latexmath]") (strings.Contains . "stem:") (strings.Contains . "[stem]") }}
+      {{ $math = true }}
+    {{ end }}
+  {{ end }}
+  {{ if site.Params.math }}{{ $math = true }}{{ end }}
+  {{ if isset .Params "math" }}{{ $math = .Params.math }}{{ end }}
+  {{ if $math }}{{ partial "math.html" . }}{{ end }}
+  {{ range site.Params.customCSS }}
+    <link rel="stylesheet" href="{{ . | relURL }}">
+  {{ end }}
+  {{ with resources.Get "js/main.js" }}
+    {{ $script := . | minify | fingerprint }}
+    <script defer src="{{ $script.RelPermalink }}" integrity="{{ $script.Data.Integrity }}"></script>
+  {{ end }}
+</head>
