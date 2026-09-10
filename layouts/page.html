@@ -22,6 +22,7 @@
     </div>
 
     {{ with .Params.source }}<p class="edit-page"><a href="{{ . }}" rel="noopener noreferrer">编辑本页 ↗</a></p>{{ end }}
+    {{ partial "comments.html" . }}
     <nav class="page-pagination" aria-label="相邻文章">
       {{ with .NextInSection }}<a class="page-prev" href="{{ .RelPermalink }}"><span>← 上一篇</span><strong>{{ .LinkTitle }}</strong></a>{{ end }}
       {{ with .PrevInSection }}<a class="page-next" href="{{ .RelPermalink }}"><span>下一篇 →</span><strong>{{ .LinkTitle }}</strong></a>{{ end }}

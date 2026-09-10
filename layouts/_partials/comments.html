@@ -1,0 +1,13 @@
+{{- $shortname := site.Config.Services.Disqus.Shortname -}}
+{{- if and .IsPage $shortname (ne .Params.comments false) -}}
+  {{- $identifier := .Params.disqus_identifier | default (printf "%s:%s" .Lang .File.UniqueID) -}}
+  {{- $url := .Params.disqus_url | default .Permalink -}}
+  {{- $title := .Params.disqus_title | default .Title -}}
+  <section class="comments" data-disqus data-disqus-shortname="{{ $shortname }}" data-disqus-identifier="{{ $identifier }}" data-disqus-url="{{ $url }}" data-disqus-title="{{ $title }}" aria-labelledby="comments-title">
+    <h2 id="comments-title">评论</h2>
+    <p class="comments-description">加载后将连接 Disqus 以显示和发布评论。</p>
+    <button class="comments-load" type="button" data-disqus-load>加载评论</button>
+    <p class="comments-status" data-disqus-status role="status" aria-live="polite"></p>
+    <noscript><p class="comments-noscript">需要启用 JavaScript 才能加载 Disqus 评论。</p></noscript>
+  </section>
+{{- end -}}

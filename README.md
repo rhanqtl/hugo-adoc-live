@@ -6,9 +6,34 @@ AsciiDoc Live 是一个面向长篇技术文章的极简 Hugo 主题。视觉取
 
 参考 https://blog.rhanqtl.com
 
+## 亮点
+
+相对于 Hugo 生态中的通用主题：
+
+- 面向长篇技术写作而不是通用博客首页：默认布局围绕正文栏、页内目录、文章元信息、标签、相邻文章和打印阅读体验组织。
+- AsciiDoc 是一等内容格式：主题从配置、archetype、示例站到 CSS/JS 都围绕 `.adoc` 工作流设计，不需要把复杂技术文档降级成 Markdown。
+- 保持轻量：不依赖前端框架，核心阅读、导航、脚注跳转和 Asciidoctor 原生返回链接在禁用 JavaScript 时仍可用。
+- 读者体验完整：内置明暗模式、阅读进度、手动字号缩放、目录高亮、代码复制、reduced-motion 和移动端折叠目录。
+- 更适合中英文技术内容：正文默认使用 Inter + Noto Sans SC 字体栈，代码块保留 Maple Mono，并为 CJK 站点给出直接可用的配置。
+- 技术文章常用能力开箱即用：LaTeX 数学公式、Chroma 语法高亮、Compiler Explorer 与 C++ Insights 嵌入都已有主题级集成。
+- 采用 Hugo 0.146+ 的新模板目录约定，主题资源和 `exampleSite` 边界清晰，便于作为现代 Hugo 主题维护和覆盖。
+
+相对于 Hugo 生态中其他支持 AsciiDoc 的主题：
+
+- 目标不是“能渲染 `.adoc`”，而是尽量覆盖 Asciidoctor HTML5 的完整语义结构，包括 admonition、sidebar/example/open block、callout、各类列表、表格、脚注和 bibliography。
+- 直接样式化 Asciidoctor 输出，而不是依赖 Markdown render hook；AsciiDoc 原生结构进入 Hugo 后仍保持可读、可导航、可打印。
+- 脚注体验更完整：保留 Asciidoctor 原生脚注跳回，并为重复具名脚注补充每一处引用位置的返回链接。
+- 文献引用可往返：Asciidoctor 原生 bibliography 负责前向跳转，主题脚本为同一文献的多次引用补充返回链接。
+- 数学公式沿用 Asciidoctor 原生 `latexmath` / `stem` 语法；主题按页面自动判断是否加载 MathJax，普通页面不会额外加载数学脚本。
+- 跨页面引用使用 Hugo Page 解析：`xref` shortcode 生成 permalink 感知链接，目标不存在时构建失败，避免静默留下坏链接。
+- AsciiDoc 源码块会在模板层接入 Hugo Chroma，同时保留 Asciidoctor callout 标记，不需要额外安装 Rouge 才能得到主题一致的高亮。
+- sidebar 与 `sidenote` role 有响应式布局：宽屏时边注进入正文右侧，窄屏时回到正文流，不牺牲移动端阅读顺序。
+- README 和示例站覆盖 `toc = "auto"`、`workingFolderCurrent`、`security.exec.allow`、扩展加载等 Hugo + Asciidoctor 关键配置，便于把真实文档站迁移到主题上。
+
 ## 功能
 
 - 顶栏主导航、约 47rem 的正文栏、超宽屏左侧页内目录；平板和手机使用正文前的折叠目录。
+- 顶栏与页脚社交链接图标，内置 GitHub、Twitter、Reddit、Stack Overflow 和 RSS 订阅入口。
 - Inter + Noto Sans SC 正文字体栈，示例使用 Google Fonts；代码块保留 Maple Mono。
 - 流式字号、读者手动缩放、跟随系统的明暗模式、阅读进度、打印样式与 reduced-motion 支持。
 - Asciidoctor HTML5 内置结构：section anchor、admonition、sidebar/example/open block、source/literal/callout、quote/verse、image/audio/video、stem、所有列表与 marker、definition/horizontal list、checklist、UI macro、内置 role、表格 frame/grid/stripes/halign/valign、脚注和 bibliography。
@@ -81,8 +106,29 @@ hasCJKLanguage = true
 description = "站点简介"
 dateFormat = "2006-01-02"
 repositoryURL = "https://github.com/you/repo" # 可删除
+enableRSS = true
 fontCSS = "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap"
 mapleFontCSS = "https://fontsapi.zeoseven.com/442/main/result.css"
+
+# 可选：启用 Disqus 评论；示例站不会配置此项。
+[services.disqus]
+shortname = "your-forum-shortname"
+
+[[params.socialIcons]]
+name = "github"
+url = "https://github.com/you"
+
+[[params.socialIcons]]
+name = "twitter"
+url = "https://twitter.com/you"
+
+[[params.socialIcons]]
+name = "reddit"
+url = "https://www.reddit.com/user/you"
+
+[[params.socialIcons]]
+name = "stackoverflow"
+url = "https://stackoverflow.com/users/123456/you"
 
 [markup.asciidocExt]
 backend = "html5"
@@ -116,6 +162,21 @@ allow = ["^asciidoctor$"]
 `failureLevel = "warn"` 会让损坏的引用、弃用语法等 warning 直接使构建失败，适合文档站 CI。如果已有站点需要渐进迁移，可以先使用 Asciidoctor 默认的 `fatal`。
 
 正文使用 Inter + Noto Sans SC，示例通过 Google Fonts 加载；代码块使用 Maple Mono，示例通过 ZeoSeven Fonts 加载。生产环境也可以自托管字体：删除 `fontCSS` / `mapleFontCSS`，把字体文件与 `@font-face` CSS 放进站点 `static/fonts` / `static/css`，再将对应参数指向自托管 CSS。主题不会把体积很大的完整字体文件提交到仓库中。
+
+## Disqus 评论
+
+在 Disqus 注册 forum 后，将其 shortname 写入 `[services.disqus]`。发布前还应在 Disqus 后台的 **Settings → General → Trusted Domains** 加入生产域名（需要预览时也加入预览域名），并在 **Appearance** 中选择 **Auto**，让首次加载的评论框跟随读者当前的明暗模式。
+
+主题默认在每篇内容页的正文之后显示“加载评论”按钮；点击前不会请求 Disqus。页面 front matter 设置 `comments = false` 可关闭评论入口。默认线程标识为“语言前缀 + 内容文件唯一 ID”，页面移动或 permalink 变更前后若需保持原评论串，可显式固定下列任意字段：
+
+```toml
+comments = false # 可选：关闭本页评论
+disqus_identifier = "zh:legacy-lowering-lifecycle"
+disqus_url = "https://example.com/old/lowering-lifecycle/"
+disqus_title = "一次 lowering 的生命周期"
+```
+
+`disqus_identifier`、`disqus_url` 和 `disqus_title` 分别覆盖默认的线程标识、canonical URL 和页面标题；通常只需在迁移旧 URL 或内容文件时设置前两项。Disqus iframe 由服务方托管，主题只能通过外层容器、首次加载时的色系和链接色与站点保持协调，不能用主题 CSS 深度重写 iframe 内部样式。
 
 ## 写一篇文章
 
@@ -323,6 +384,8 @@ hugo --source exampleSite \
 - `params.eyebrow`：首页标题上方的小字。
 - `params.dateFormat`：日期格式，默认 `2006-01-02`。
 - `params.repositoryURL`：页脚源码链接；省略即隐藏。
+- `params.socialIcons`：社交链接数组，形如 `name = "github"` 与 `url = "https://..."`；内置图标包括 `github`、`twitter`、`reddit`、`stackoverflow` 和 `rss`，未知名称会回退为通用链接图标。
+- `params.enableRSS`：是否显示自动 RSS 订阅入口，默认开启；当 Hugo 当前页面没有 RSS 输出时回退到首页 RSS。
 - `params.fontCSS`：正文字体 CSS URL；省略时只使用本机 Inter / Noto Sans SC 与系统 sans-serif 回退。
 - `params.mapleFontCSS`：代码字体 CSS URL；省略时只使用本机 Maple Mono 与系统 monospace 回退。
 - `params.math`：强制全站加载 MathJax；未设置时按页面中的 AsciiDoc 数学语法自动判断。

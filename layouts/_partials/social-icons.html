@@ -1,0 +1,43 @@
+{{- $icons := site.Params.socialIcons -}}
+{{- $rssOutput := or (.OutputFormats.Get "rss") (site.Home.OutputFormats.Get "rss") -}}
+{{- $enableRSS := true -}}
+{{- if isset site.Params "enablerss" -}}
+  {{- $enableRSS = site.Params.enableRSS -}}
+{{- end -}}
+{{- $hasRSS := false -}}
+{{- range $icons -}}
+  {{- $name := .name | default .Name | default "" -}}
+  {{- $key := replaceRE "[^a-z0-9]" "" (lower $name) -}}
+  {{- if eq $key "rss" -}}{{- $hasRSS = true -}}{{- end -}}
+{{- end -}}
+{{- if or $icons (and $enableRSS $rssOutput (not $hasRSS)) -}}
+  <nav class="social-icons" aria-label="{{ site.Params.socialIconsLabel | default "社交链接与订阅" }}">
+    {{- range $icons -}}
+      {{- $name := .name | default .Name | default "" -}}
+      {{- $key := replaceRE "[^a-z0-9]" "" (lower $name) -}}
+      {{- $url := .url | default .URL | default "" -}}
+      {{- $label := .title | default .Title | default .label | default .Label -}}
+      {{- if not $label -}}
+        {{- if eq $key "github" -}}{{- $label = "GitHub" -}}
+        {{- else if or (eq $key "twitter") (eq $key "x") -}}{{- $label = "Twitter" -}}
+        {{- else if eq $key "reddit" -}}{{- $label = "Reddit" -}}
+        {{- else if eq $key "stackoverflow" -}}{{- $label = "Stack Overflow" -}}
+        {{- else if eq $key "rss" -}}{{- $label = "RSS" -}}
+        {{- else -}}{{- $label = $name | humanize | title -}}
+        {{- end -}}
+      {{- end -}}
+      {{- if and $key $url -}}
+        <a class="social-icon social-icon-{{ $key }}" href="{{ $url | safeURL }}" title="{{ $label }}" aria-label="{{ $label }}" rel="{{ if strings.HasPrefix $url "http" }}me noopener noreferrer{{ else if eq $key "rss" }}alternate{{ else }}noopener noreferrer{{ end }}">
+          {{- partial "social-icon.html" $key -}}
+          <span class="sr-only">{{ $label }}</span>
+        </a>
+      {{- end -}}
+    {{- end -}}
+    {{- if and $enableRSS $rssOutput (not $hasRSS) -}}
+      <a class="social-icon social-icon-rss" href="{{ $rssOutput.RelPermalink }}" title="RSS" aria-label="RSS" rel="alternate" type="application/rss+xml">
+        {{- partial "social-icon.html" "rss" -}}
+        <span class="sr-only">RSS</span>
+      </a>
+    {{- end -}}
+  </nav>
+{{- end -}}

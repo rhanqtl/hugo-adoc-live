@@ -58,6 +58,59 @@
   }, {passive: true});
   updateProgress();
 
+  const comments = document.querySelector('[data-disqus]');
+  const commentsButton = comments?.querySelector('[data-disqus-load]');
+  const commentsStatus = comments?.querySelector('[data-disqus-status]');
+  if (comments && commentsButton && commentsStatus) {
+    let commentsLoaded = false;
+    const setCommentsStatus = (message) => { commentsStatus.textContent = message; };
+    const loadComments = () => {
+      if (commentsLoaded || commentsButton.disabled) return;
+      const shortname = comments.dataset.disqusShortname;
+      if (!shortname || !/^[a-z0-9-]+$/i.test(shortname)) {
+        setCommentsStatus('评论配置无效，暂时无法加载。');
+        comments.classList.add('comments-error');
+        commentsButton.textContent = '重新加载评论';
+        return;
+      }
+
+      comments.classList.remove('comments-error');
+      commentsButton.disabled = true;
+      commentsButton.textContent = '正在加载评论…';
+      setCommentsStatus('正在连接 Disqus…');
+
+      const thread = document.createElement('div');
+      thread.id = 'disqus_thread';
+      comments.append(thread);
+      window.disqus_config = function disqusConfig() {
+        this.page.url = comments.dataset.disqusUrl;
+        this.page.identifier = comments.dataset.disqusIdentifier;
+        this.page.title = comments.dataset.disqusTitle;
+      };
+
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = `https://${shortname}.disqus.com/embed.js`;
+      script.setAttribute('data-timestamp', String(Date.now()));
+      script.addEventListener('load', () => {
+        commentsLoaded = true;
+        comments.classList.add('comments-loaded');
+        commentsButton.hidden = true;
+        setCommentsStatus('评论已加载。');
+      }, {once: true});
+      script.addEventListener('error', () => {
+        script.remove();
+        thread.remove();
+        commentsButton.disabled = false;
+        commentsButton.textContent = '重新加载评论';
+        comments.classList.add('comments-error');
+        setCommentsStatus('无法加载评论服务，请检查网络后重试。');
+      }, {once: true});
+      document.head.append(script);
+    };
+    commentsButton.addEventListener('click', loadComments);
+  }
+
   const article = document.querySelector('[data-article-body]');
   if (!article) return;
 

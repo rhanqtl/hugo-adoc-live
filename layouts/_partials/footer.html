@@ -1,12 +1,11 @@
 <footer class="site-footer">
-  <div>
+  <div class="footer-meta">
     <span>© {{ now.Year }} {{ site.Title }}</span>
     <span class="footer-dot" aria-hidden="true">·</span>
     <span>Hugo + Asciidoctor</span>
-    {{ with site.Params.repositoryURL }}
-      <span class="footer-dot" aria-hidden="true">·</span>
-      <a href="{{ . }}" rel="noopener noreferrer">源码 ↗</a>
-    {{ end }}
+  </div>
+  <div class="footer-social">
+    {{ partial "social-icons.html" . }}
   </div>
   <a href="#top" data-back-to-top>回到顶部 ↑</a>
 </footer>
