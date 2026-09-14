@@ -200,13 +200,27 @@ figure { margin: 0; }
 }
 .header-nav a:hover, .header-nav a[aria-current="page"] { color: var(--text); }
 
-.reader-tools {
-  display: flex;
-  align-items: center;
-  flex: 0 0 auto;
-  gap: 0.25rem;
-  margin-left: auto;
+.header-search { display: flex; flex: 0 1 clamp(8rem, 17vw, 14rem); min-width: 6.5rem; margin-left: auto; border-bottom: 1px solid var(--line); }
+.reader-tools > summary { list-style: none; cursor: pointer; }
+.reader-tools > summary::-webkit-details-marker { display: none; }
+.reader-tools-trigger {
+  display: inline-grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 999px;
+  color: var(--muted);
 }
+.reader-tools-trigger:hover, .reader-tools[open] .reader-tools-trigger { background: var(--surface-soft); color: var(--text); }
+.header-search input { width: 100%; min-width: 0; padding: 0.35rem 0.1rem; border: 0; outline: 0; background: transparent; color: var(--text); font-size: 0.78rem; }
+.header-search input::placeholder { color: var(--faint); }
+.header-search button { display: grid; flex: 0 0 auto; place-items: center; width: 2rem; border: 0; background: transparent; color: var(--muted); cursor: pointer; }
+.header-search button:hover { color: var(--accent); }
+.header-search button svg { width: 1rem; fill: currentColor; }
+
+.reader-tools { position: fixed; z-index: 120; right: 1rem; bottom: 1.25rem; }
+.reader-tools-trigger { border: 1px solid var(--line); background: var(--surface); box-shadow: var(--shadow); font-size: 0.78rem; font-weight: 700; }
+.reader-tools-panel { display: flex; align-items: center; gap: 0.25rem; position: absolute; right: 0; bottom: calc(100% + 0.55rem); padding: 0.3rem; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); box-shadow: var(--shadow); }
 
 .social-icons {
   display: inline-flex;
@@ -410,6 +424,43 @@ figure { margin: 0; }
 .list-header { margin-bottom: 2rem; }
 .compact-list .page-card h2 { font-size: 1.2rem; }
 .empty-state { color: var(--muted); }
+
+/* Search results are rendered locally from Hugo's build-time index. */
+.search-page { width: 100%; }
+.search-page > h1 { margin: 0 0 1.5rem; font-size: clamp(1.6rem, 4vw, 2.25rem); }
+.search-form { display: flex; border-bottom: 1px solid var(--line-strong); }
+.search-form input {
+  width: 100%;
+  min-width: 0;
+  padding: 0.7rem 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font-size: clamp(1.2rem, 3vw, 1.7rem);
+}
+.search-submit {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 3rem;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.search-submit:hover { color: var(--accent); }
+.search-submit svg { width: 1.4rem; fill: currentColor; }
+.search-status { min-height: 1.5em; margin: 1rem 0 0; color: var(--faint); font-size: 0.75rem; }
+.search-results { margin-top: 0.4rem; }
+.search-results:empty { display: none; }
+.search-results .page-card p {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+}
+.search-results mark { padding: 0 0.08em; background: var(--mark); color: inherit; }
 
 .page-pagination {
   display: grid;
@@ -995,8 +1046,8 @@ figure { margin: 0; }
 }
 
 @media (max-width: 36rem) {
-  .reader-tools { gap: 0; }
-  .site-brand { max-width: 52vw; overflow: hidden; text-overflow: ellipsis; }
+  .site-brand { max-width: 34vw; overflow: hidden; text-overflow: ellipsis; }
+  .header-search { flex-basis: 6.5rem; min-width: 5.75rem; }
   .footer-social { order: 3; width: 100%; margin-left: 0; }
   .page-pagination { grid-template-columns: 1fr; }
   .page-next { grid-column: 1; }
@@ -1014,7 +1065,7 @@ figure { margin: 0; }
 @media print {
   :root { --bg: #fff; --surface: #fff; --surface-soft: #f5f5f5; --surface-code: #f4f4f4; --text: #111; --muted: #333; --faint: #555; --line: #bbb; --accent: #111; }
   body { background: #fff; color: #111; font-size: 10pt; }
-  .site-header, .page-rail, .mobile-toc, .reading-progress, .site-footer, .page-pagination, .edit-page, .comments, .copy-code, .interactive-embed { display: none !important; }
+  .site-header, .page-rail, .mobile-toc, .reading-progress, .site-footer, .reader-tools, .page-pagination, .edit-page, .comments, .copy-code, .interactive-embed { display: none !important; }
   .page-shell, .page-shell.has-page-rail { display: block; }
   .main-content { max-width: none; padding: 0; }
   .article-header h1 { font-size: 24pt; }

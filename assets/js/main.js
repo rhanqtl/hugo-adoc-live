@@ -111,6 +111,86 @@
     commentsButton.addEventListener('click', loadComments);
   }
 
+  const searchPage = document.querySelector('[data-search-page]');
+  const searchForm = searchPage?.querySelector('[data-search-form]');
+  const searchInput = searchPage?.querySelector('[data-search-input]');
+  const searchStatus = searchPage?.querySelector('[data-search-status]');
+  const searchResults = searchPage?.querySelector('[data-search-results]');
+  if (searchPage && searchForm && searchInput && searchStatus && searchResults) {
+    let index;
+    const normalize = (value) => String(value || '').toLowerCase();
+    const appendHighlightedText = (element, value, term) => {
+      const text = String(value || '');
+      const lowerText = normalize(text);
+      let offset = 0;
+      let match = lowerText.indexOf(term, offset);
+      while (match !== -1) {
+        element.append(document.createTextNode(text.slice(offset, match)));
+        const mark = document.createElement('mark');
+        mark.textContent = text.slice(match, match + term.length);
+        element.append(mark);
+        offset = match + term.length;
+        match = lowerText.indexOf(term, offset);
+      }
+      element.append(document.createTextNode(text.slice(offset)));
+    };
+    const render = (pages, term) => {
+      searchResults.replaceChildren();
+      pages.forEach((page) => {
+        const card = document.createElement('article');
+        card.className = 'page-card';
+        const meta = document.createElement('div');
+        meta.className = 'card-meta';
+        meta.textContent = page.date || '';
+        const heading = document.createElement('h2');
+        const link = document.createElement('a');
+        link.href = page.permalink;
+        appendHighlightedText(link, page.title, term);
+        heading.append(link);
+        card.append(meta, heading);
+        if (page.summary) {
+          const summary = document.createElement('p');
+          appendHighlightedText(summary, page.summary, term);
+          card.append(summary);
+        }
+        searchResults.append(card);
+      });
+    };
+    const loadIndex = async () => {
+      if (index) return index;
+      const response = await fetch(searchPage.dataset.searchIndex, {headers: {Accept: 'application/json'}});
+      if (!response.ok) throw new Error(`search index: ${response.status}`);
+      index = await response.json();
+      return index;
+    };
+    const search = async (query) => {
+      const term = normalize(query).trim();
+      searchResults.replaceChildren();
+      if (!term) { searchStatus.textContent = ''; return; }
+      searchStatus.textContent = '…';
+      try {
+        const pages = await loadIndex();
+        const matches = pages.filter((page) => [page.title, page.summary, page.content, page.tags, page.categories]
+          .some((value) => normalize(Array.isArray(value) ? value.join(' ') : value).includes(term)));
+        render(matches, term);
+        searchStatus.textContent = matches.length ? '' : '没有匹配的文章。';
+      } catch (_) {
+        searchStatus.textContent = '搜索索引不可用。';
+      }
+    };
+    searchForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const url = new URL(window.location.href);
+      if (searchInput.value) url.searchParams.set('q', searchInput.value); else url.searchParams.delete('q');
+      history.replaceState(null, '', url);
+      search(searchInput.value);
+    });
+    const initialQuery = new URLSearchParams(window.location.search).get('q') || '';
+    searchInput.value = initialQuery;
+    if (initialQuery) search(initialQuery);
+    else searchInput.focus();
+  }
+
   const article = document.querySelector('[data-article-body]');
   if (!article) return;
 

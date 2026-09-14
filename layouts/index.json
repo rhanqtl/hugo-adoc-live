@@ -1,0 +1,18 @@
+{{- $pages := where (where site.RegularPages "Draft" false) "Layout" "ne" "search" -}}
+{{- $index := slice -}}
+{{- range $pages.ByDate.Reverse -}}
+  {{- $tags := slice -}}
+  {{- range .GetTerms "tags" }}{{ $tags = $tags | append .LinkTitle }}{{ end -}}
+  {{- $categories := slice -}}
+  {{- range .GetTerms "categories" }}{{ $categories = $categories | append .LinkTitle }}{{ end -}}
+  {{- $index = $index | append (dict
+    "title" .LinkTitle
+    "permalink" .RelPermalink
+    "summary" (.Summary | plainify)
+    "content" .Plain
+    "tags" $tags
+    "categories" $categories
+    "date" (.Date.Format "2006-01-02")
+  ) -}}
+{{- end -}}
+{{- $index | jsonify -}}

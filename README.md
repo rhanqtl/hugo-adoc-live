@@ -16,6 +16,7 @@ AsciiDoc Live 是一个面向长篇技术文章的极简 Hugo 主题。视觉取
 - 读者体验完整：内置明暗模式、阅读进度、手动字号缩放、目录高亮、代码复制、reduced-motion 和移动端折叠目录。
 - 更适合中英文技术内容：正文默认使用 Inter + Noto Sans SC 字体栈，代码块保留 Maple Mono，并为 CJK 站点给出直接可用的配置。
 - 技术文章常用能力开箱即用：LaTeX 数学公式、Chroma 语法高亮、Compiler Explorer 与 C++ Insights 嵌入都已有主题级集成。
+- 站内搜索不依赖外部服务：Hugo 在构建时生成全文 JSON 索引，浏览器只在提交搜索时读取它；草稿永远不会进入索引。
 - 采用 Hugo 0.146+ 的新模板目录约定，主题资源和 `exampleSite` 边界清晰，便于作为现代 Hugo 主题维护和覆盖。
 
 相对于 Hugo 生态中其他支持 AsciiDoc 的主题：
@@ -158,6 +159,28 @@ style = "onedark"
 [security.exec]
 allow = ["^asciidoctor$"]
 ```
+
+## 站内搜索
+
+搜索是一个功能页，不应作为文章加入列表或索引。在站点创建 `content/search.md`，使用下面的 front matter；它会生成 `/search/`，页面标题暂定为“搜索”。导航栏会自动提供可展开的快捷搜索入口；提交后转到此页面展示结果。页面本身不渲染文章目录、正文、相邻文章或评论，结果摘要最多显示五行，并会高亮匹配词。
+
+```toml
++++
+title = "搜索"
+layout = "search"
+[build]
+list = "never"
++++
+```
+
+Hugo 负责构建索引；在站点配置中为首页启用 `JSON` 输出：
+
+```toml
+[outputs]
+home = ["HTML", "RSS", "JSON"]
+```
+
+主题的 `layouts/index.json` 会从 `site.RegularPages` 生成 `/index.json`，并显式筛掉 `draft: true` 的内容。索引包含文章标题、摘要、正文纯文本、标签、分类、日期和相对链接；搜索完全在浏览器本地执行。
 
 `failureLevel = "warn"` 会让损坏的引用、弃用语法等 warning 直接使构建失败，适合文档站 CI。如果已有站点需要渐进迁移，可以先使用 Asciidoctor 默认的 `fatal`。
 

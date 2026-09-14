@@ -1,0 +1,14 @@
+{{ define "main" }}
+  <section class="search-page" data-search-page data-search-index="{{ "index.json" | relURL }}">
+    <h1>搜索</h1>
+    <form class="search-form" data-search-form role="search">
+      <label class="sr-only" for="search-query">搜索</label>
+      <input id="search-query" name="q" type="search" autocomplete="off" data-search-input>
+      <button class="search-submit" type="submit" aria-label="搜索">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 19.6-5.1-5.1a8 8 0 1 0-1.4 1.4l5.1 5.1zM4.5 10a5.5 5.5 0 1 1 11 0 5.5 5.5 0 0 1-11 0z"/></svg>
+      </button>
+    </form>
+    <p class="search-status" data-search-status role="status"></p>
+    <section class="page-list search-results" data-search-results aria-live="polite"></section>
+  </section>
+{{ end }}

@@ -6,11 +6,11 @@
     <div class="reading-progress" aria-hidden="true"><span></span></div>
     {{ partial "header.html" . }}
 
-    <div class="page-shell{{ if .IsPage }} has-page-rail{{ end }}">
+    <div class="page-shell{{ if and .IsPage (ne .Layout "search") }} has-page-rail{{ end }}">
       <main id="main-content" class="main-content" tabindex="-1">
         {{ block "main" . }}{{ end }}
       </main>
-      {{ if .IsPage }}{{ partial "page-rail.html" . }}{{ end }}
+      {{ if and .IsPage (ne .Layout "search") }}{{ partial "page-rail.html" . }}{{ end }}
     </div>
 
     {{ partial "footer.html" . }}

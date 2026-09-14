@@ -1,4 +1,5 @@
 {{ define "main" }}
+  {{- $pages := where site.RegularPages "Layout" "ne" "search" -}}
   <section class="home-hero">
     <p class="eyebrow">{{ site.Params.eyebrow | default "A QUIET PLACE FOR TECHNICAL NOTES" }}</p>
     <h1>{{ site.Params.Title }}</h1>
@@ -9,9 +10,9 @@
 
   <section class="page-list" aria-labelledby="latest-title">
     <div class="section-heading">
-      <h2 id="latest-title">{{ len site.RegularPages }} 篇</h2>
+      <h2 id="latest-title">{{ len $pages }} 篇</h2>
     </div>
-    {{ range site.RegularPages.ByWeight }}
+    {{ range $pages.ByWeight }}
       {{ if not .Params.navHidden }}
         <article class="page-card">
           <div class="card-meta">{{ with .CurrentSection }}{{ .LinkTitle }}{{ end }}{{ with .Date }} · {{ .Format (site.Params.dateFormat | default "2006-01-02") }}{{ end }}</div>
@@ -23,4 +24,3 @@
     {{ end }}
   </section>
 {{ end }}
-

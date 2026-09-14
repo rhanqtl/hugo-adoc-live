@@ -7,11 +7,24 @@
     <nav class="header-nav" aria-label="主导航">
       {{ range site.Menus.main }}<a href="{{ .URL | relLangURL }}"{{ if $.IsMenuCurrent "main" . }} aria-current="page"{{ end }}>{{ .Name }}</a>{{ end }}
     </nav>
-    <div class="reader-tools" aria-label="阅读设置">
-      <button class="icon-button font-button" type="button" data-font-action="down" title="缩小字号" aria-label="缩小字号">A−</button>
-      <button class="icon-button font-button" type="button" data-font-action="reset" title="恢复自适应字号" aria-label="恢复自适应字号">A</button>
-      <button class="icon-button font-button" type="button" data-font-action="up" title="放大字号" aria-label="放大字号">A+</button>
-      <button class="icon-button theme-toggle" type="button" data-theme-toggle title="切换明暗主题" aria-label="切换明暗主题"><span aria-hidden="true">◐</span></button>
-    </div>
+    <form class="header-search" action="{{ "search/" | relURL }}" method="get" role="search">
+      <label class="sr-only" for="header-search-query">搜索文章</label>
+      <input id="header-search-query" name="q" type="search" autocomplete="off" placeholder="搜索文章">
+      <button type="submit" aria-label="搜索" title="搜索">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 19.6-5.1-5.1a8 8 0 1 0-1.4 1.4l5.1 5.1zM4.5 10a5.5 5.5 0 1 1 11 0 5.5 5.5 0 0 1-11 0z"/></svg>
+      </button>
+    </form>
   </div>
 </header>
+
+<details class="reader-tools">
+  <summary class="reader-tools-trigger" aria-label="打开阅读设置" title="阅读设置">
+    <span aria-hidden="true">Aa</span><span class="sr-only">阅读设置</span>
+  </summary>
+  <div class="reader-tools-panel" aria-label="阅读设置">
+    <button class="icon-button font-button" type="button" data-font-action="down" title="缩小字号" aria-label="缩小字号">A−</button>
+    <button class="icon-button font-button" type="button" data-font-action="reset" title="恢复自适应字号" aria-label="恢复自适应字号">A</button>
+    <button class="icon-button font-button" type="button" data-font-action="up" title="放大字号" aria-label="放大字号">A+</button>
+    <button class="icon-button theme-toggle" type="button" data-theme-toggle title="切换明暗主题" aria-label="切换明暗主题"><span aria-hidden="true">◐</span></button>
+  </div>
+</details>
